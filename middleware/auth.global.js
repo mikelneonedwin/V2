@@ -3,5 +3,4 @@ export default defineNuxtRouteMiddleware((to) => {
     if(process.client) return;
     const signed = useCookie('_cid');
     if(!signed.value) return navigateTo('/signup');
-    return;
 })
