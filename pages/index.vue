@@ -96,13 +96,6 @@ function inc(o){
     form.day += o == '+' ? 1 : -1;
     form.day = !form.day ? 1 : form.day > 30 ? 30 : form.day;
 }
-definePageMeta({
-    middleware: function(){
-        if(process.client) return false;
-        const signed = useCookie('_cid');
-        if(!signed.value) return navigateTo('/signup');
-    }
-})
 const transform = (array) => reactive(array.sort().map(a => ({txt: a, opt: false})));
 const frameworks = transform(['React.js', 'Vue.js', 'Next.js', 'Nuxt.js', 'Svelte', 'Angular', 'AngularJS', 'TailwindCSS', 'Material UI', 'Vuex', 'Pinia', 'Redux', 'Bootstrap', 'jQuery', 'Express.js', 'Django', 'Laravel', 'Ruby On Rails']);
 const tools = transform(['Firebase', 'Vercel', 'GitHub', 'MongoDB', 'SQL', 'Node.js', 'Netlify', 'React-Native', 'GitLab', 'BitBucket']);
