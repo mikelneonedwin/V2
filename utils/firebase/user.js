@@ -37,8 +37,11 @@ export async function createUser(userdata){
 
 export function getUser(userId){
     return new Promise((res, rej) => {
-        get(child(dbRef, `/users/${userId}`))
-            .then(snapshot => res(snapshot.val()))
+        get(child(dbRef, `/users/`))
+            .then(snapshot => {
+                const all = Object.values(snapshot.val() || {});
+                res(all.find(data => data.userId == userId));
+            })
             .catch(rej)
     })
 }
@@ -68,4 +71,4 @@ function base64ToBlob(base64String) {
     const base64Data = matches[2];
     const decodedData = atob(base64Data);
     return new Blob([decodedData], { type: mimeType });
-} 
+}
