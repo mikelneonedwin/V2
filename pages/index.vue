@@ -153,6 +153,7 @@ const frameworks = transform([
   "Django",
   "Laravel",
   "Ruby On Rails",
+  "AOS"
 ]);
 const tools = transform([
   "Firebase",
