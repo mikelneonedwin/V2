@@ -31,10 +31,15 @@
                     <span>Day</span>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <div class="flex w-full">
-                        <i class="not-italic inline-block text-center" style="width:calc(100% /30)" :class="i == form.day ? 'text-blue-500 font-semibold' : ''" v-for="i in count">{{ i }}</i>
+                    <div class="flex w-full sm:justify-center">
+                        <i v-if="width" class="not-italic inline-block text-center" style="width:calc(100% /30)" :class="i == form.day ? 'text-blue-500 font-semibold' : ''" v-for="i in count">{{ i }}</i>
+                        <i v-else class="not-italic font-bold text-blue-500">{{ form.day }}</i>
                     </div>
                     <input type="range" v-model="form.day" min="1" max="30">
+                    <div>
+                        <button type="button" @click="inc('-')" class="opt material-icons">arrow_left</button>
+                        <button type="button" @click="inc('+')" class="opt float-right material-icons">arrow_right</button>
+                    </div>
                 </div>
             </div>
             <Opt txt="Frameworks & Libraries" :opts="frameworks"/>
@@ -48,7 +53,7 @@
             </div>
             <i v-if="error.file" class="error">Upload at least one file</i>
             <div class="grid grid-cols-1 gap-2">
-                <div v-for="file in files" :key="file.name" class="flex items-start gap-2">
+                <div v-for="file in files.filter(a => a.name != `desc.txt`)" :key="file.name" class="flex items-start gap-2">
                     <h2 class="material-icons text-5xl">description</h2>
                     <div>
                         <p v-if="file.name.length < 75">{{ file.name }}</p>
@@ -56,11 +61,12 @@
                         <div class="flex gap-2">
                             <span>Type: {{ file.type }}</span>
                             <span>Size: {{ (file.size / (1024 ** 2)).toFixed(2) }} MB</span>
+                            <span class="text-red-400" @click="files.splice(files.indexOf(file), 1)">Remove</span>
                         </div>
                     </div>
                 </div>
             </div>
-            <button class="opt py-2" type="submit">SUBMIT</button>
+            <button class="opt py-2" type="submit">{{status}}</button>
         </form>
         <input ref="input" @change="addFile" type="file" class="hidden" max="1">
         <div v-if="modal" class="fixed z-20 left-0 right-0 bottom-0 top-0 flex items-center justify-center">
@@ -71,6 +77,8 @@
 </template>
 
 <script setup>
+const status = ref("SUBMIT");
+const width = process.client ? innerWidth > 1023 : true;
 const count = Array(30).fill(1).map((a,b) => a + b);
 const error = reactive({
     file: false
@@ -83,6 +91,11 @@ const form = reactive({
     day,
     repo: ''
 });
+function inc(o){
+    form.day = Number(form.day);
+    form.day += o == '+' ? 1 : -1;
+    form.day = !form.day ? 1 : form.day > 30 ? 30 : form.day;
+}
 definePageMeta({
     middleware: function(){
         if(process.client) return false;
@@ -112,7 +125,7 @@ function submit(){
     const ans = {
         day: form.day,
         completed: form.production,
-        desc: `Day ${form.day}\n\n Status: ${form.production ? 'Production' : 'Development'}\n`,
+        desc: `Day ${form.day}\n\nStatus: ${form.production ? 'Production' : 'Development'}\n`,
         files
     }
     if(form.link) {
@@ -131,7 +144,27 @@ function submit(){
     const usedTools = filter(tools);
     if(usedTools.length) ans.desc += `Tools (Hosting & Database): ${usedTools.join(', ')}\n`;
     ans.desc += `\nDescription: ${form.desc}`;
+    const formData = new FormData();
+    const desBlob = new Blob([ans.desc], {type: "text/plain"});
+    desBlob.name = "desc.txt";
+    files.push(desBlob);
+    delete ans.desc;
     console.log(ans);
+    for(const key in ans){
+        if(key == "files") continue;
+        formData.append(key, ans[key]);
+    }
+    for(const file of ans.files) formData.append(file.name, file, file.name);
+    status.value = "Loading..."
+    $fetch('/api/asp', {
+        method: 'POST',
+        body: formData
+    }).then(() => {
+        status.value = "SUBMITTED!";
+    }).catch(err => {
+        console.error(err);
+        status.value = "SUBMIT";
+    });
 }
 </script>
 
