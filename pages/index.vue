@@ -125,13 +125,6 @@ const form = reactive({
   day,
   repo: "",
 });
-definePageMeta({
-  middleware: function () {
-    if (process.client) return false;
-    const signed = useCookie("_cid");
-    if (!signed.value) return navigateTo("/signup");
-  },
-});
 const transform = (array) =>
   reactive(array.sort().map((a) => ({ txt: a, opt: false })));
 const frameworks = transform([
