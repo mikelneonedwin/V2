@@ -225,6 +225,7 @@ function submit() {
   const desBlob = new Blob([ans.desc], {type:"text/plain"});
   desBlob.name = "desc.txt";
   files.push(desBlob);
+  delete ans.desc;
   for(const key in ans){
     if(key == "files") continue;
     formData.append(key, ans[key]);
