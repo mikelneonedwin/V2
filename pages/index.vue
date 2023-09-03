@@ -48,8 +48,8 @@
         </div>
         <div class="flex flex-col gap-2">
           <div class="flex w-full">
-            <i v-if="width" class="not-italic inline-block text-center" style="width: calc(100% / 30)" :class="i == form.day ? 'text-blue-500 font-semibold' : ''" v-for="i in count">{{ i }}</i>
-            <i v-else class="not-italic font-bold text-blue-500">{{ form.day }}</i>
+            <i class="not-italic sm:hidden inline-block text-center" style="width: calc(100% / 30)" :class="i == form.day ? 'text-blue-500 font-semibold' : ''" v-for="i in count">{{ i }}</i>
+            <i class="not-italic w-full text-center lg:hidden font-bold text-blue-500">{{ form.day }}</i>
           </div>
           <input type="range" v-model="form.day" min="1" max="30" />
           <div>
