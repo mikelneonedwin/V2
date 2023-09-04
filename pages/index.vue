@@ -154,7 +154,8 @@ const frameworks = transform([
   "Laravel",
   "Ruby On Rails",
   "AOS",
-  "Chart.js"
+  "Chart.js",
+  "Mantine UI"
 ]);
 const tools = transform([
   "Firebase",
