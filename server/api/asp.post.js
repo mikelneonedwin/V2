@@ -30,7 +30,7 @@ export default defineEventHandler(async(event) => {
     dbEntry.files = files.length;
     const { day } = dbEntry;
     let success = true;
-    await uploadDaysWork(day, dbEntry, fileEntry, user).catch(console.error)
+    await uploadDaysWork(day, dbEntry, fileEntry, user)
     .catch(err => {
         console.error(err);
         success = false;

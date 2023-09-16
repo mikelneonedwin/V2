@@ -2,6 +2,7 @@
   <div class="lg:w-3/4 lg:mx-auto">
     <form @submit.prevent="submit" class="form">
       <h1>It's day {{ day }}</h1>
+      <p class="opacity-70 font-semibold text-sm">So far you have only uploaded {{ upl.length }} projects for the following days: <b class="text-green-400 block lg:inline">{{ upl.join(', ') }}</b> </p>
       <div class="input">
         <div>
           <span>Live Link (Optional)</span>
@@ -111,6 +112,7 @@
 </template>
 
 <script setup>
+const {data:upl} = await useFetch('/api/days');
 const status = ref('SUBMIT');
 const width = process.client ? innerWidth > 1023 : true;
 const count = Array(30)
