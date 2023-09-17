@@ -8,5 +8,5 @@ export default defineEventHandler(async event => {
     }
     const userData = await getUser(userId);
     const upl = Object.keys(userData.uploads || {});
-    return upl.map(Number);
+    return upl.map(a => a.padStart(2, 0)).sort().map(Number);
 })

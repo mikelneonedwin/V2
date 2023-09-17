@@ -3,6 +3,7 @@
     <form @submit.prevent="submit" class="form">
       <h1>It's day {{ day }}</h1>
       <p class="opacity-70 font-semibold text-sm">So far you have only uploaded {{ upl.length }} projects for the following days: <b class="text-green-400 block lg:inline">{{ upl.join(', ') }}</b> </p>
+      <p class="opacity-70 font-semibold text-sm" v-if="upl.length != day">You are missing behind on {{ missing.length }} days: <b class="text-red-500 block lg:inline">{{ missing.join(', ') }}</b></p>
       <div class="input">
         <div>
           <span>Live Link (Optional)</span>
@@ -112,7 +113,9 @@
 </template>
 
 <script setup>
+const day = challengeDay();
 const {data:upl} = await useFetch('/api/days');
+const missing = Array(day).fill(1).map((a,b) => a + b).filter(a => !upl.value.includes(a));
 const status = ref('SUBMIT');
 const width = process.client ? innerWidth > 1023 : true;
 const count = Array(30)
@@ -121,7 +124,6 @@ const count = Array(30)
 const error = reactive({
   file: false,
 });
-const day = challengeDay();
 const form = reactive({
   link: "",
   desc: "",
